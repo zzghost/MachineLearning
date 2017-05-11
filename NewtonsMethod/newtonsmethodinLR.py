@@ -1,5 +1,6 @@
+# -*- coding:utf-8 -*-
 '''
-    实现牛顿法，将它应用到logistic regression中
+    implement newton's method in logistic regression
 '''
 import pandas as pd
 import numpy as np
@@ -26,7 +27,7 @@ def updateTheta(dataX, dataY, theta):
     H = H / row
     theta = theta - np.dot(H.getI(), grad)
     return theta
-'''
+
 def drawScatter(dataX, dataY, theta):
     fig = plt.figure()
     ax = plt.subplot(211)
@@ -43,17 +44,16 @@ def drawScatter(dataX, dataY, theta):
     type1 = ax.scatter(typeX1.iloc[:, 0], typeX1.iloc[:, 1], s=40, c='blue')
     type2 = ax.scatter(typeX2.iloc[:, 0], typeX2.iloc[:, 1], s=40, c='red')
     #draw hypothesis
-    x1_min, x1_max = np.min(typeX1.iloc[:, 0]), np.max(typeX1.iloc[:, 1])
-    x2_min, m2_max = np.min(typeX2.iloc[:, 0]), np.max(typeX2.iloc[:, 1])
-    xx1, xx2 = np.meshgrid(np.arange(x1_min, x1_max, 0.1), np.arange(x2_min, m2_max, 0.1))
-    h = 1.0 / 1.0 + np.exp(np.dot(np.c_[np.ones((xx1.ravel().shape[0], 1)), xx1.ravel(), xx2.ravel()], theta.reshape(-1, 1)))
-    h = h.reshape(xx1.shape)
-    #plt.contour(h, colors='r')
-    print(h)
-    plt.contour(xx1, xx2, h, [0.5], linewidths=1, colors='r')
+    dataX = np.matrix(dataX)
+    min_x = min(dataX[:, 0])[0, 0]
+    max_x = max(dataX[:, 0])[0, 0]
+    theta = np.matrix(theta).getT().getA()
+    y_min = float(-theta[2] - theta[0] * min_x) / theta[1]
+    y_max = float(-theta[2] - theta[0] * max_x) / theta[1]
+    plt.plot([min_x, max_x], [y_min, y_max], '-g')
     #finally show
     plt.show()
-'''
+
 if __name__ == "__main__":
     MAX_ITTER = 20
     dataX, dataY = data()
@@ -64,4 +64,4 @@ if __name__ == "__main__":
     for j  in range(MAX_ITTER):
         theta = updateTheta(dataX, dataY, theta)
     print(theta)
-    #drawScatter(dataX, dataY, theta)
+    drawScatter(dataX, dataY, theta)
